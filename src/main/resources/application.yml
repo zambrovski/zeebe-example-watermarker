@@ -1,0 +1,8 @@
+zeebe:
+  watermark: c:/projects/zeebe-example-watermarker/.tmp/watermark.png
+  sourceDir: c:/projects/zeebe-example-watermarker/.tmp/from?delete=false
+  destDir: c:/projects/zeebe-example-watermarker/.tmp/to
+
+camel:
+  springboot:
+    mainRunController: true
