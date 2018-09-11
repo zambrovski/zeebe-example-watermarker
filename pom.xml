@@ -13,10 +13,6 @@
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     <kotlin-logging.version>1.5.4</kotlin-logging.version>
     <springboot.version>2.0.1.RELEASE</springboot.version>
-
-    <version.zeebe>0.5.0</version.zeebe>
-    <version.zb-util>0.5.0</version.zb-util>
-    <version.jackson>2.9.5</version.jackson>
   </properties>
 
 
@@ -35,12 +31,13 @@
 
 
   <dependencies>
-
+    <!-- Camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
       <version>2.17.0</version>
     </dependency>
+    <!--  Springboot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -66,16 +63,7 @@
       <artifactId>kotlin-logging</artifactId>
       <version>${kotlin-logging.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-kotlin</artifactId>
-      <version>${version.jackson}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${version.jackson}</version>
-    </dependency>
+    <!-- Image processing -->
     <dependency>
       <groupId>org.imgscalr</groupId>
       <artifactId>imgscalr-lib</artifactId>
@@ -85,19 +73,6 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.5</version>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>3.8.0</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -110,17 +85,6 @@
         <version>${kotlin.version}</version>
         <executions>
           <execution>
-            <id>kapt</id>
-            <goals>
-              <goal>kapt</goal>
-            </goals>
-            <configuration>
-              <sourceDirs>
-                <sourceDir>src/main/kotlin</sourceDir>
-              </sourceDirs>
-            </configuration>
-          </execution>
-          <execution>
             <id>compile</id>
             <goals>
               <goal>compile</goal>
@@ -128,23 +92,11 @@
             <configuration>
               <compilerPlugins>
                 <plugin>spring</plugin>
-                <plugin>jpa</plugin>
                 <plugin>no-arg</plugin>
               </compilerPlugins>
               <jvmTarget>1.8</jvmTarget>
               <sourceDirs>
                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-              </sourceDirs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>test-compile</id>
-            <goals>
-              <goal>test-compile</goal>
-            </goals>
-            <configuration>
-              <sourceDirs>
-                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
               </sourceDirs>
             </configuration>
           </execution>
@@ -161,31 +113,6 @@
             <version>${kotlin.version}</version>
           </dependency>
         </dependencies>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <finalName>watermarker</finalName>
-          <appendAssemblyId>false</appendAssemblyId>
-          <archive>
-            <manifest>
-              <mainClass>io.zeebe.example.watermark.Watermarker</mainClass>
-            </manifest>
-          </archive>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

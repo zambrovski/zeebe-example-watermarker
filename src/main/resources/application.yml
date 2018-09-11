@@ -1,6 +1,6 @@
 zeebe:
   watermark: c:/projects/zeebe-example-watermarker/.tmp/watermark.png
-  sourceDir: c:/projects/zeebe-example-watermarker/.tmp/from?delete=false
+  sourceDir: c:/projects/zeebe-example-watermarker/.tmp/from
   destDir: c:/projects/zeebe-example-watermarker/.tmp/to
 
 camel:

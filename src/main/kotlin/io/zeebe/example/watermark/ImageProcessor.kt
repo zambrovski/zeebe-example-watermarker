@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.stereotype.Component
-import java.io.File
 import java.io.InputStream
+import javax.imageio.ImageIO
 
-fun main(args: Array<String>) = SpringApplication.run(Watermarker::class.java, *args) as Unit
+fun main(args: Array<String>) = SpringApplication.run(ImageProcessor::class.java, *args).let { Unit }
 
 @SpringBootApplication
-open class Watermarker
+open class ImageProcessor
 
 @Component
 open class WatermarkerRouter : RouteBuilder() {
@@ -26,17 +26,28 @@ open class WatermarkerRouter : RouteBuilder() {
 
     @Autowired
     private lateinit var watermarker: WatermarkingProcessor
+    @Autowired
+    private lateinit var thumbnailer: ThumbnailProcessor
 
-    fun sourceFile() = "file:" + sourceDir
-    fun destinationFile() = "file:" + destDir
+    fun sourceFile() = "file:$sourceDir?delete=false"
+    fun destinationFile() = "file:$destDir"
 
 
     override fun configure() {
         from(sourceFile())
+                .id("File processor")
+                .to("direct:watermark")
+                .to("direct:thumbnail")
+        from("direct:watermark")
                 .id("Watermark image")
-                .log(LoggingLevel.INFO, "Processing file")
+                .log(LoggingLevel.INFO, "Watermarking file")
                 .process(watermarker)
                 .to(destinationFile())
-    }
 
+        from("direct:thumbnail")
+                .id("Thumbnailing image")
+                .log(LoggingLevel.INFO, "Thumbnailing file")
+                .process(thumbnailer)
+                .to(destinationFile())
+    }
 }

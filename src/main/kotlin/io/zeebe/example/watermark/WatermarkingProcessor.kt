@@ -34,21 +34,13 @@ class WatermarkingProcessor : Processor {
     override fun process(exchange: Exchange) {
 
         val fis = exchange.getIn().getBody(InputStream::class.java)
-        val out = ByteArrayOutputStream()
-
-//        val sourceImageStream = ImageIO.createImageInputStream(fis)
-//        val sourceReader = ImageIO.getImageReaders(sourceImageStream).next().apply { input = sourceImageStream }
-
-
-//         logger.info { "Format ${sourceReader.formatName}" }
+        val baos = ByteArrayOutputStream()
 
         val source = ImageIO.read(fis)
         markImage(source, watermark)
+        ImageIO.write(source, "png", baos)
 
-        ImageIO.write(source, "png", out)
-
-        exchange.getIn().body = out
-
+        exchange.getIn().body = baos
     }
 
     fun markImage(image: BufferedImage, watermark: BufferedImage) {
