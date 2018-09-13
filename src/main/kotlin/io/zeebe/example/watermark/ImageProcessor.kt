@@ -40,13 +40,13 @@ open class WatermarkerRouter : RouteBuilder() {
                 .to("direct:thumbnail")
         from("direct:watermark")
                 .id("Watermark image")
-                .log(LoggingLevel.INFO, "Watermarking file")
+                .log(LoggingLevel.INFO, "Watermarking file \${header.CamelFileName}")
                 .process(watermarker)
                 .to(destinationFile())
 
         from("direct:thumbnail")
                 .id("Thumbnailing image")
-                .log(LoggingLevel.INFO, "Thumbnailing file")
+                .log(LoggingLevel.INFO, "Thumbnailing file \${header.CamelFileName}")
                 .process(thumbnailer)
                 .to(destinationFile())
     }

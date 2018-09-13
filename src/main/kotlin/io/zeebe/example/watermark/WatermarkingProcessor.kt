@@ -13,6 +13,7 @@ import java.io.File
 import java.io.InputStream
 import javax.annotation.PostConstruct
 import javax.imageio.ImageIO
+import javax.imageio.ImageReader
 
 
 @Component
@@ -36,14 +37,19 @@ class WatermarkingProcessor : Processor {
         val fis = exchange.getIn().getBody(InputStream::class.java)
         val baos = ByteArrayOutputStream()
 
-        val source = ImageIO.read(fis)
-        markImage(source, watermark)
-        ImageIO.write(source, "png", baos)
+        val typedImageStream = ImageIO.createImageInputStream(fis)
+        val reader = (ImageIO.getImageReaders(typedImageStream).next()
+                ?: throw IllegalArgumentException("No reader found")).apply { input = typedImageStream }
+
+        val source = reader.read(0)
+        watermarkImage(source)
+        ImageIO.write(source, reader.formatName, baos)
 
         exchange.getIn().body = baos
+        exchange.getIn().headers[Exchange.FILE_NAME] = "watermarked_${exchange.getIn().headers[Exchange.FILE_NAME]}"
     }
 
-    fun markImage(image: BufferedImage, watermark: BufferedImage) {
+    fun watermarkImage(image: BufferedImage) {
         val watermarkWidth = image.width / 3
         val scalingFactor = watermarkWidth.toDouble() / watermark.width
         val watermarkHeight = (watermark.height * scalingFactor).toInt()

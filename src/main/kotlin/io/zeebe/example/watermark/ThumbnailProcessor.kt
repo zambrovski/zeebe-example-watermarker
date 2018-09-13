@@ -22,9 +22,13 @@ class ThumbnailProcessor : Processor {
         val fis = exchange.getIn().getBody(InputStream::class.java)
         val baos = ByteArrayOutputStream()
 
-        val source = ImageIO.read(fis)
+        val typedImageStream = ImageIO.createImageInputStream(fis)
+        val reader = (ImageIO.getImageReaders(typedImageStream).next()
+                ?: throw IllegalArgumentException("No reader found")).apply { input = typedImageStream }
+
+        val source = reader.read(0)
         val thumbnail = createThumbnail(source)
-        ImageIO.write(thumbnail, "png", baos)
+        ImageIO.write(thumbnail, reader.formatName, baos)
 
         exchange.getIn().body = baos
         exchange.getIn().headers[Exchange.FILE_NAME] = "thumb_${exchange.getIn().headers[Exchange.FILE_NAME]}"
